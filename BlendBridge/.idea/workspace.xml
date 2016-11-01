@@ -21,11 +21,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/blender_bridge_exporter/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="498">
               <caret line="114" column="0" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="export_bb.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/blender_bridge_exporter/export_bb.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="816">
+              <caret line="144" column="4" selection-start-line="144" selection-start-column="4" selection-end-line="144" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -53,6 +63,7 @@
         <option value="$PROJECT_DIR$/BlenderBridgeExporter/__init__.py" />
         <option value="$PROJECT_DIR$/BlenderBridgeExporter/export_bb.py" />
         <option value="$PROJECT_DIR$/blender_bridge_exporter/__init__.py" />
+        <option value="$PROJECT_DIR$/blender_bridge_exporter/export_bb.py" />
       </list>
     </option>
   </component>
@@ -519,6 +530,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="498">
           <caret line="114" column="0" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/blender_bridge_exporter/export_bb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="816">
+          <caret line="144" column="4" selection-start-line="144" selection-start-column="4" selection-end-line="144" selection-end-column="4" />
           <folding />
         </state>
       </provider>

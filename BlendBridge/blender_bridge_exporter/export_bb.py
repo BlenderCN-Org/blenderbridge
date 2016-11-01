@@ -141,4 +141,6 @@ def save(context, filepath, *, use_triangles=True, use_normals=True, use_uvs=Tru
          use_mesh_modifiers=True, use_selection=True, use_animation=False, global_matrix=None, path_mode='AUTO'):
 
     objs = BlenderBridgeSceneParser.parse_scene()
-
+    print(objs)
+    
+    return {'FINISHED'}
