@@ -1,0 +1,8 @@
+https://blenderartists.org/forum/showthread.php?389012-Best-way-for-developing-under-Blender-with-external-Editor-(PyCharm)
+
+I got bpy into pycharm by doing this:
+1. download http://airplanes3d.net/downloads/pyd...ev-blender.zip - autocompletion files for the most Blender API classes, and the script, which generates them
+2. unzip into Blender folder(where blender.exe is).
+3. go into doc folder and run refresh_python_api.bat.
+4. go into doc\python_api\pypredef folder and change all extensions to .py instead of pypredef.
+5. cut or copy contents of pypredef folder to you Python's Lib folder. 
