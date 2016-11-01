@@ -16,7 +16,7 @@ class BObject(object):
         self.uvs = uvs
         self.materials = materials
 
-    def __dict__(self):
+    def to_dict(self):
         return {
             'name': self.name,
             'vertices': self.vertices,
@@ -28,15 +28,7 @@ class BObject(object):
         }
 
     def to_json(self):
-        return json.dumps({
-            'name': self.name,
-            'vertices': self.vertices,
-            'normals': self.normals,
-            'faces': self.faces,
-            'face_materials': self.face_materials,
-            'uvs': self.uvs,
-            'materials': self.materials
-        })
+        return json.dumps(self.to_dict())
 
 
 class BlenderBridgeSceneParser:
@@ -85,10 +77,15 @@ class BlenderBridgeSceneParser:
 
     @staticmethod
     def create_materials_array(face_materials):
+        """
+        https://www.blender.org/api/blender_python_api_2_67_release//bpy.types.Material.html
+        https://wiki.blender.org/index.php/Dev:Py/Scripts/Cookbook/Code_snippets/Materials_and_textures
+        """
         materials = []
 
         for face_material in face_materials:
             mat = {
+                "name": face_material.name,
                 "diffuse_color": [face_material.diffuse_color[0], face_material.diffuse_color[1], face_material.diffuse_color[2]],
                 "diffuse_shader": face_material.diffuse_shader,
                 "diffuse_shader": face_material.diffuse_shader,
@@ -107,8 +104,6 @@ class BlenderBridgeSceneParser:
     @staticmethod
     def parse_scene(apply_mods=True, triangulate=True):
         bobjects = []
-
-        #scene = bpy.context.scene
 
         for obj in bpy.context.selected_objects:
             matrix = obj.matrix_world.copy()
@@ -140,7 +135,9 @@ class BlenderBridgeSceneParser:
 def save(context, filepath, *, use_triangles=True, use_normals=True, use_uvs=True, use_materials=True,
          use_mesh_modifiers=True, use_selection=True, use_animation=False, global_matrix=None, path_mode='AUTO'):
 
-    objs = BlenderBridgeSceneParser.parse_scene()
-    print(objs)
-    
+    with open(filepath, mode='w') as f:
+        objs = BlenderBridgeSceneParser.parse_scene()
+        objs = [obj.to_dict() for obj in objs]
+        json.dump(objs, f)
+
     return {'FINISHED'}
