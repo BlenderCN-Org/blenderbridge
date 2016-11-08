@@ -1,0 +1,1 @@
+xcopy /s "C:\Users\joshn\OneDrive\git\blenderbridge\BlendBridge\vr_bridge" "C:\Program Files\Blender Foundation\Blender\2.78\scripts\addons\vr_bridge\"
