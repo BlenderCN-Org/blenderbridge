@@ -18,7 +18,7 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
         // Client socket.
         public Socket workSocket = null;
         // Size of receive buffer.
-        public const int BufferSize = 1024;
+        public const int BufferSize = 50000;
         // Receive buffer.
         public byte[] buffer = new byte[BufferSize];
         // Received data string.
@@ -27,6 +27,9 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
 
 
     #endregion 
+
+    public delegate void DataRecieved(string data);
+    public event DataRecieved OnDataRecieved;
 
     public string hostname = "localhost";
     public int port = 5555;
@@ -47,7 +50,7 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
     {
         get
         {
-            return client != null && client.IsBound; 
+            return client != null; 
         }
     }       
 
@@ -75,25 +78,33 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
 
         try
         {
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(hostname);
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+            Debug.Log("Initilising Connection"); 
 
-            client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);            
+            client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), client);
-            connectDone.WaitOne();
+            //IPHostEntry ipHostInfo = Dns.GetHostEntry(hostname);
+            //IPAddress ipAddress = ipHostInfo.AddressList[0];
+            //IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+            //client.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), client);
+            //connectDone.WaitOne();
+
+            client.Connect(hostname, port);
+
+            Debug.Log("Connected");
 
             Send("0");
-            sendDone.WaitOne();
+
+            //AsyncSend("0");
+            //sendDone.WaitOne();
 
             isRecieving = true;
 
-            Receive();
+            BeginRecieving();
 
         }
         catch (Exception e)
         {
+            Debug.LogWarningFormat("Error trying to connect with client {0}", e.Message); 
             Invoke("Connect", delayBetweenConnectionAttempts);
         }
 
@@ -126,8 +137,30 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
     {
         if (!IsConnected)
         {
+            Debug.Log("Not connected or connection is not ready");
+            return false;
+        }
+
+        Debug.Log("Sending Data");
+
+        // Convert the string data to byte data using ASCII encoding.
+        byte[] byteData = Encoding.ASCII.GetBytes(data);
+
+        int dataSent = client.Send(byteData);
+
+        Debug.LogFormat("Sent {0} bytes", dataSent);
+
+        return true;
+    }
+
+    public bool AsyncSend(String data)
+    {
+        if (!IsConnected)
+        {
             return false; 
         }
+
+        Debug.Log("Sending Data"); 
 
         // Convert the string data to byte data using ASCII encoding.
         byte[] byteData = Encoding.ASCII.GetBytes(data);
@@ -138,7 +171,7 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
         return true; 
     }
 
-    private bool Receive()
+    private bool BeginRecieving()
     {
         if (!IsConnected || !isRecieving)
         {
@@ -169,18 +202,56 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
     {
         try
         {
+            Debug.Log("ReceiveCallback"); 
             // Retrieve the state object and the client socket 
             // from the asynchronous state object.
             StateObject state = (StateObject)ar.AsyncState;
             Socket client = state.workSocket;
-
+            
             // Read data from the remote device.
             int bytesRead = client.EndReceive(ar);
 
             if (bytesRead > 0)
             {
                 // There might be more data, so store the data received so far.
-                state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+                //state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+
+                //string tmpString = Convert.ToBase64String(state.buffer, 0, bytesRead);
+
+                int startValue = 123; // {
+                int endValue = 125; // }
+                int startIndex = -1;
+                int endIndex = -1; 
+                 
+                for(int i=0; i< bytesRead; i++)
+                {
+                    if(state.buffer[i] == startValue)
+                    {
+                        startIndex = i;
+                        break; 
+                    }
+                }
+                for(int i=bytesRead-1; i>=0; i--)
+                {
+                    if (state.buffer[i] == endValue)
+                    {
+                        endIndex = i;
+                        break;
+                    }
+                }
+
+                if(startIndex >= 0 && endIndex > startIndex)
+                {
+                    string tmpString = Encoding.ASCII.GetString(state.buffer, startIndex, endIndex);
+                    
+                    if(OnDataRecieved != null)
+                    {
+                        OnDataRecieved(tmpString); 
+                    }
+                    //state.sb.Append(Convert.ToBase64String(state.buffer, 0, bytesRead));
+
+                    Debug.LogFormat("Appending Data {0} --- {1}", bytesRead, tmpString);
+                }                
 
                 // Get the rest of the data.
                 client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback), state);
@@ -195,17 +266,19 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
                     Debug.Log(response);
                 }
 
-                Receive(); 
+                BeginRecieving(); 
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.ToString());
+            Debug.LogWarning(e.ToString());
+            BeginRecieving();
         }
     }
 
     private void SendCallback(IAsyncResult ar)
     {
+        Debug.Log("SendCallback"); 
         try
         {
             // Retrieve the socket from the state object.
@@ -226,6 +299,8 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
 
     private void ConnectCallback(IAsyncResult ar)
     {
+        Debug.Log("ConnectCallback"); 
+
         try
         {
             // Retrieve the socket from the state object.

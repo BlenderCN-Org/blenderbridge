@@ -78,7 +78,7 @@ class Bridge(metaclass=Singleton):
         while self.running:
             while not self.packet_queue.empty():
                 packet = self.packet_queue.get()
-                self.socket.send_string("hello")
+                self.socket.send_string(packet)
 
             time.sleep(0.2)
 
