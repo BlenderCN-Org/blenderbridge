@@ -18217,6 +18217,160 @@ Note: calling this function will implicitly call Application.SetStackTraceLogTyp
       <param name="platform">Platform to set the flag for.</param>
       <param name="automatic">Should best available graphics API be used?</param>
     </member>
+    <member name="T:UnityEditor.PlayerSettings.SplashScreen">
+      <summary>
+        <para>Interface to splash screen player settings.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.animationBackgroundZoom">
+      <summary>
+        <para>The target zoom (from 0 to 1) for the background when it reaches the end of the SplashScreen animation's total duration. Only used when animationMode is PlayerSettings.SplashScreen.AnimationMode.Custom|AnimationMode.Custom.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.animationLogoZoom">
+      <summary>
+        <para>The target zoom (from 0 to 1) for the logo when it reaches the end of the logo animation's total duration. Only used when animationMode is PlayerSettings.SplashScreen.AnimationMode.Custom|AnimationMode.Custom.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.animationMode">
+      <summary>
+        <para>The type of animation applied during the splash screen.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.background">
+      <summary>
+        <para>The background Sprite that is shown in landscape mode. Also shown in portrait mode if backgroundPortrait is null.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.backgroundColor">
+      <summary>
+        <para>The background color shown if no background Sprite is assigned. Default is a dark blue RGB(34.44,54).</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.backgroundPortrait">
+      <summary>
+        <para>The background Sprite that is shown in portrait mode.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.drawMode">
+      <summary>
+        <para>Determines how the Unity logo should be drawn, if it is enabled. If no Unity logo exists in [logos] then the draw mode defaults to PlayerSettings.SplashScreen.DrawMode.UnityLogoBelow|DrawMode.UnityLogoBelow.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.logos">
+      <summary>
+        <para>The collection of logos that is shown during the splash screen. Logos are drawn in ascending order, starting from index 0, followed by 1, etc etc.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.overlayOpacity">
+      <summary>
+        <para>In order to increase contrast between the background and the logos, an overlay color modifier is applied. The overlay opacity is the strength of this effect. Note: Reducing the value below 0.5 requires a Plus/Pro license.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.show">
+      <summary>
+        <para>Set this to true to display the Splash Screen be shown when the application is launched. Set it to false to disable the Splash Screen. Note: Disabling the Splash Screen requires a Plus/Pro license.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.showUnityLogo">
+      <summary>
+        <para>Set this to true to show the Unity logo during the Splash Screen. Set it to false to disable the Unity logo. Note: Disabling the Unity logo requires a Plus/Pro license.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreen.unityLogoStyle">
+      <summary>
+        <para>The style to use for the Unity logo during the Splash Screen.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEditor.PlayerSettings.SplashScreen.AnimationMode">
+      <summary>
+        <para>The type of animation applied during the Splash Screen.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.PlayerSettings.SplashScreen.AnimationMode.Custom">
+      <summary>
+        <para>Animates the Splash Screen using custom values from PlayerSettings.SplashScreen.animationBackgroundZoom and PlayerSettings.SplashScreen.animationLogoZoom.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.PlayerSettings.SplashScreen.AnimationMode.Dolly">
+      <summary>
+        <para>Animates the Splash Screen with a simulated dolly effect.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.PlayerSettings.SplashScreen.AnimationMode.Static">
+      <summary>
+        <para>No animation is applied to the Splash Screen logo or background.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEditor.PlayerSettings.SplashScreen.DrawMode">
+      <summary>
+        <para>Determines how the Unity logo should be drawn, if it is enabled.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.PlayerSettings.SplashScreen.DrawMode.AllSequential">
+      <summary>
+        <para>The Unity logo is shown sequentially providing it exists in the PlayerSettings.SplashScreen.logos collection.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.PlayerSettings.SplashScreen.DrawMode.UnityLogoBelow">
+      <summary>
+        <para>The Unity logo is drawn in the lower portion of the screen for the duration of the Splash Screen, while the PlayerSettings.SplashScreen.logos are shown in the centre.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEditor.PlayerSettings.SplashScreen.UnityLogoStyle">
+      <summary>
+        <para>The style to use for the Unity logo during the Splash Screen.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.PlayerSettings.SplashScreen.UnityLogoStyle.DarkOnLight">
+      <summary>
+        <para>A dark Unity logo with a light background.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEditor.PlayerSettings.SplashScreen.UnityLogoStyle.LightOnDark">
+      <summary>
+        <para>A white Unity logo with a dark background.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEditor.PlayerSettings.SplashScreenLogo">
+      <summary>
+        <para>A single logo that is shown during the Splash Screen. Controls the Sprite that is displayed and its duration.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreenLogo.duration">
+      <summary>
+        <para>The total time in seconds for which the logo is shown. The minimum duration is 2 seconds.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreenLogo.logo">
+      <summary>
+        <para>The Sprite that is shown during this logo. If this is null, then no logo will be displayed for the duration.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEditor.PlayerSettings.SplashScreenLogo.unityLogo">
+      <summary>
+        <para>The Unity logo Sprite.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEditor.PlayerSettings.SplashScreenLogo.Create(System.Single,UnityEngine.Sprite)">
+      <summary>
+        <para>Creates a new Splash Screen logo with the provided duration and logo Sprite.</para>
+      </summary>
+      <param name="duration">The total time in seconds that the logo will be shown. Note minimum time is 2 seconds.</param>
+      <param name="logo">The logo Sprite to display.</param>
+      <returns>
+        <para>The new logo.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEditor.PlayerSettings.SplashScreenLogo.CreateWithUnityLogo(System.Single)">
+      <summary>
+        <para>Creates a new Splash Screen logo with the provided duration and the unity logo.</para>
+      </summary>
+      <param name="duration">The total time in seconds that the logo will be shown. Note minimum time is 2 seconds.</param>
+      <returns>
+        <para>The new logo.</para>
+      </returns>
+    </member>
     <member name="T:UnityEditor.PlayerSettings.Tizen">
       <summary>
         <para>Tizen specific player settings.</para>
@@ -18778,6 +18932,11 @@ For more information - https:msdn.microsoft.comlibrarywindowsappshh779671https:m
       <param name="platform">Target platform.</param>
       <param name="platformName">Name of the target platform.</param>
     </member>
+    <member name="M:UnityEditor.PluginImporter.GetIsOverridable">
+      <summary>
+        <para>Identifies whether or not this plugin will be overridden if a plugin of the same name is placed in your project folder.</para>
+      </summary>
+    </member>
     <member name="M:UnityEditor.PluginImporter.GetPlatformData(UnityEditor.BuildTarget,System.String)">
       <summary>
         <para>Get platform specific data.</para>
@@ -18868,6 +19027,11 @@ For more information - https:msdn.microsoft.comlibrarywindowsappshh779671https:m
       <param name="key">Key value for data.</param>
       <param name="value">Data.</param>
       <param name="platformName"></param>
+    </member>
+    <member name="M:UnityEditor.PluginImporter.ShouldIncludeInBuild">
+      <summary>
+        <para>Identifies whether or not this plugin should be included in the current build target.</para>
+      </summary>
     </member>
     <member name="T:UnityEditor.PopupWindow">
       <summary>

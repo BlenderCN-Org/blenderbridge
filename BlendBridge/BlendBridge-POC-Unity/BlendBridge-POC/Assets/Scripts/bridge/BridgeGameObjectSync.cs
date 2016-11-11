@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class BridgeGameObjectSync : MonoBehaviour {
 
 	// Use this for initialization
@@ -13,4 +15,10 @@ public class BridgeGameObjectSync : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void Bind(BridgeObject bo)
+    {
+        bo.BindMeshFilter(GetComponent<MeshFilter>());
+        bo.BindMeshRenderer(GetComponent<MeshRenderer>());
+    }
 }

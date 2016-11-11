@@ -1466,6 +1466,14 @@
       </summary>
       <param name="data">The data pertaining to the current mouse state.</param>
     </member>
+    <member name="M:UnityEngine.EventSystems.StandaloneInputModule.ProcessTouchPress(UnityEngine.EventSystems.PointerEventData,System.Boolean,System.Boolean)">
+      <summary>
+        <para>How should the touch press be processed.</para>
+      </summary>
+      <param name="pointerEvent">The data to be passed to the final object.</param>
+      <param name="pressed">If the touch was pressed this frame.</param>
+      <param name="released">If the touch was released this frame.</param>
+    </member>
     <member name="M:UnityEngine.EventSystems.StandaloneInputModule.SendMoveEventToSelectedObject">
       <summary>
         <para>Calculate and send a move event to the current selected object.</para>
@@ -3089,6 +3097,16 @@ If you have modified the list of options, you should call this method afterwards
         <para>Abstract base class for HorizontalLayoutGroup and VerticalLayoutGroup.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.UI.HorizontalOrVerticalLayoutGroup.childControlHeight">
+      <summary>
+        <para>Should the layout group control the heights of the children?</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.UI.HorizontalOrVerticalLayoutGroup.childControlWidth">
+      <summary>
+        <para>Should the layout group control the widths of the children?</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.UI.HorizontalOrVerticalLayoutGroup.childForceExpandHeight">
       <summary>
         <para>Whether to force the children to expand to fill additional available vertical space.</para>
@@ -4243,6 +4261,15 @@ Characters 0-9, . (dot), and - (dash / minus sign) are allowed. The dash is only
         <para>Called by the layout system.</para>
       </summary>
     </member>
+    <member name="M:UnityEngine.UI.LayoutGroup.GetAlignmentOnAxis(System.Int32)">
+      <summary>
+        <para>Returns the alignment on the specified axis as a fraction where 0 is lefttop, 0.5 is middle, and 1 is rightbottom.</para>
+      </summary>
+      <param name="axis">The axis to get alignment along. 0 is horizontal and 1 is vertical.</param>
+      <returns>
+        <para>The alignment as a fraction where 0 is lefttop, 0.5 is middle, and 1 is rightbottom.</para>
+      </returns>
+    </member>
     <member name="M:UnityEngine.UI.LayoutGroup.GetStartOffset(System.Int32,System.Single)">
       <summary>
         <para>Returns the calculated position of the first child layout element along the given axis.</para>
@@ -5202,6 +5229,16 @@ Characters 0-9, . (dot), and - (dash / minus sign) are allowed. The dash is only
     <member name="M:UnityEngine.UI.ScrollRect.StopMovement">
       <summary>
         <para>Sets the velocity to zero on both axes so the content stops moving.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.UI.ScrollRect.UpdateBounds">
+      <summary>
+        <para>Calculate the bounds the ScrollRect should be using.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.UI.ScrollRect.UpdatePrevData">
+      <summary>
+        <para>Helper function to update the previous data fields on a ScrollRect.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.UI.Selectable">

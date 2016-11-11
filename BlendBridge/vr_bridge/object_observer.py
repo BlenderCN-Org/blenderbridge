@@ -38,7 +38,7 @@ class ObjectObserver(metaclass=Singleton):
             if obj not in self.observing_objects:
                 continue
 
-            if not obj.is_updated:
+            if not obj.is_updated and not obj.data.is_updated:
                 continue
 
             self.on_object_updated(obj)

@@ -4178,6 +4178,11 @@ Check the value of this property before making ReplayKit broadcasting API calls.
         <para>A string property that contains an URL used to redirect the user to an on-going or completed broadcast (Read Only).</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.cameraEnabled">
+      <summary>
+        <para>Camera enabled status, true, if camera enabled, false otherwise.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.isBroadcasting">
       <summary>
         <para>Boolean property that indicates whether a broadcast is currently in progress (Read Only).</para>
@@ -4191,6 +4196,11 @@ Check the value of this property before making ReplayKit broadcasting API calls.
     <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.lastError">
       <summary>
         <para>A string value of the last error incurred by the ReplayKit: Either 'Failed to get Screen Recorder' or 'No recording available'. (Read Only)</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.microphoneEnabled">
+      <summary>
+        <para>Microphone enabled status, true, if microhone enabled, false otherwise.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Apple.ReplayKit.ReplayKit.recordingAvailable">
@@ -4218,6 +4228,11 @@ Check the value of this property before making ReplayKit broadcasting API calls.
         <para>A boolean value of True if the recording was discarded successfully or False if an error occurred.</para>
       </returns>
     </member>
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.HideCameraPreview">
+      <summary>
+        <para>Hide the camera preview view.</para>
+      </summary>
+    </member>
     <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.Preview">
       <summary>
         <para>Preview the current recording</para>
@@ -4225,6 +4240,13 @@ Check the value of this property before making ReplayKit broadcasting API calls.
       <returns>
         <para>A boolean value of True if the video preview window opened successfully or False if an error occurred.</para>
       </returns>
+    </member>
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.ShowCameraPreviewAt(System.Single,System.Single)">
+      <summary>
+        <para>Shows camera preview at coordinates posX and posY.</para>
+      </summary>
+      <param name="posX"></param>
+      <param name="posY"></param>
     </member>
     <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StartBroadcasting">
       <summary>
@@ -4234,12 +4256,15 @@ It will also be invoked in case of any error.
         </para>
       </summary>
       <param name="callback">A callback for getting the status of broadcast initiation.</param>
+      <param name="enableMicrophone">Enable or disable the microphone while broadcasting. Enabling the microphone allows you to include user commentary while broadcasting. The default value is false.</param>
+      <param name="enableCamera">Enable or disable the camera while broadcasting. Enabling camera allows you to include user camera footage while broadcasting. The default value is false. To actually include camera footage in your broadcast, you also have to call ShowCameraPreviewAt as well to position the preview view.</param>
     </member>
-    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StartRecording(System.Boolean)">
+    <member name="M:UnityEngine.Apple.ReplayKit.ReplayKit.StartRecording(System.Boolean,System.Boolean)">
       <summary>
         <para>Start a new recording.</para>
       </summary>
       <param name="enableMicrophone">Enable or disable the microphone while making a recording. Enabling the microphone allows you to include user commentary while recording. The default value is false.</param>
+      <param name="enableCamera">Enable or disable the camera while making a recording. Enabling camera allows you to include user camera footage while recording. The default value is false. To actually include camera footage in your recording, you also have to call ShowCameraPreviewAt as well to position the preview view.</param>
       <returns>
         <para>A boolean value of True if recording started successfully or False if an error occurred.</para>
       </returns>
@@ -7951,6 +7976,16 @@ See Also: WWW.assetBundle, WWW.LoadFromCacheOrDownload.</param>
         <para>The rendering path that should be used, if possible.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Camera.stereoActiveEye">
+      <summary>
+        <para>Returns the eye that is currently rendering.
+If called when stereo is not enabled it will return Camera.MonoOrStereoscopicEye.Mono.
+
+If called during a camera rendering callback such as OnRenderImage it will return the currently rendering eye.
+
+If called outside of a rendering callback and stereo is enabled, it will return the default eye which is Camera.MonoOrStereoscopicEye.Left.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Camera.stereoConvergence">
       <summary>
         <para>Distance to a point where virtual eyes converge.</para>
@@ -8018,6 +8053,15 @@ See Also: WWW.assetBundle, WWW.LoadFromCacheOrDownload.</param>
       <param name="evt">When to execute the command buffer during rendering.</param>
       <param name="buffer">The buffer to execute.</param>
     </member>
+    <member name="M:UnityEngine.Camera.CalculateFrustumCorners(UnityEngine.Rect,System.Single,UnityEngine.Camera/MonoOrStereoscopicEye,UnityEngine.Vector3[])">
+      <summary>
+        <para>Given viewport coordinates, calculates the view space vectors pointing to the four frustum corners at the specified camera depth.</para>
+      </summary>
+      <param name="viewport">Normalized viewport coordinates to use for the frustum calculation.</param>
+      <param name="z">Z-depth from the camera origin at which the corners will be calculated.</param>
+      <param name="eye">Camera eye projection matrix to use.</param>
+      <param name="outCorners">Output array for the frustum corner vectors. Cannot be null and length must be &gt;= 4.</param>
+    </member>
     <member name="M:UnityEngine.Camera.CalculateObliqueMatrix(UnityEngine.Vector4)">
       <summary>
         <para>Calculates and returns oblique near-plane projection matrix.</para>
@@ -8071,6 +8115,30 @@ See Also: WWW.assetBundle, WWW.LoadFromCacheOrDownload.</param>
       <returns>
         <para>The matrix of the stereo eye.</para>
       </returns>
+    </member>
+    <member name="T:UnityEngine.Camera.MonoOrStereoscopicEye">
+      <summary>
+        <para>A Camera eye corresponding to the left or right human eye for stereoscopic rendering, or neither for non-stereoscopic rendering.
+
+A single Camera can render both left and right views in a single frame. Therefore, this enum describes which eye the Camera is currently rendering when returned by Camera.stereoActiveEye during a rendering callback (such as Camera.OnRenderImage), or which eye to act on when passed into a function.
+
+The default value is Camera.MonoOrStereoscopicEye.Left, so Camera.MonoOrStereoscopicEye.Left may be returned by some methods or properties when called outside of rendering if stereoscopic rendering is enabled.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Camera.MonoOrStereoscopicEye.Left">
+      <summary>
+        <para>Camera eye corresponding to stereoscopic rendering of the left eye.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Camera.MonoOrStereoscopicEye.Mono">
+      <summary>
+        <para>Camera eye corresponding to non-stereoscopic rendering.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Camera.MonoOrStereoscopicEye.Right">
+      <summary>
+        <para>Camera eye corresponding to stereoscopic rendering of the right eye.</para>
+      </summary>
     </member>
     <member name="M:UnityEngine.Camera.RemoveAllCommandBuffers">
       <summary>
@@ -10547,6 +10615,15 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Set a bool parameter.</para>
       </summary>
       <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="val">Value to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetBool(System.Int32,System.Boolean)">
+      <summary>
+        <para>Set a bool parameter.</para>
+      </summary>
+      <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="val">Value to set.</param>
     </member>
     <member name="M:UnityEngine.ComputeShader.SetBuffer(System.Int32,System.String,UnityEngine.ComputeBuffer)">
@@ -10554,6 +10631,16 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Sets an input or output compute buffer.</para>
       </summary>
       <param name="kernelIndex">For which kernel the buffer is being set. See FindKernel.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="name">Name of the buffer variable in shader code.</param>
+      <param name="buffer">Buffer to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetBuffer(System.Int32,System.Int32,UnityEngine.ComputeBuffer)">
+      <summary>
+        <para>Sets an input or output compute buffer.</para>
+      </summary>
+      <param name="kernelIndex">For which kernel the buffer is being set. See FindKernel.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="name">Name of the buffer variable in shader code.</param>
       <param name="buffer">Buffer to set.</param>
     </member>
@@ -10562,6 +10649,15 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Set a float parameter.</para>
       </summary>
       <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="val">Value to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetFloat(System.Int32,System.Single)">
+      <summary>
+        <para>Set a float parameter.</para>
+      </summary>
+      <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="val">Value to set.</param>
     </member>
     <member name="M:UnityEngine.ComputeShader.SetFloats(System.String,System.Single[])">
@@ -10569,6 +10665,15 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Set multiple consecutive float parameters at once.</para>
       </summary>
       <param name="name">Array variable name in the shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="values">Value array to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetFloats(System.Int32,System.Single[])">
+      <summary>
+        <para>Set multiple consecutive float parameters at once.</para>
+      </summary>
+      <param name="name">Array variable name in the shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="values">Value array to set.</param>
     </member>
     <member name="M:UnityEngine.ComputeShader.SetInt(System.String,System.Int32)">
@@ -10576,6 +10681,15 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Set an integer parameter.</para>
       </summary>
       <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="val">Value to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetInt(System.Int32,System.Int32)">
+      <summary>
+        <para>Set an integer parameter.</para>
+      </summary>
+      <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="val">Value to set.</param>
     </member>
     <member name="M:UnityEngine.ComputeShader.SetInts(System.String,System.Int32[])">
@@ -10583,6 +10697,15 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Set multiple consecutive integer parameters at once.</para>
       </summary>
       <param name="name">Array variable name in the shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="values">Value array to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetInts(System.Int32,System.Int32[])">
+      <summary>
+        <para>Set multiple consecutive integer parameters at once.</para>
+      </summary>
+      <param name="name">Array variable name in the shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="values">Value array to set.</param>
     </member>
     <member name="M:UnityEngine.ComputeShader.SetTexture(System.Int32,System.String,UnityEngine.Texture)">
@@ -10590,6 +10713,16 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Set a texture parameter.</para>
       </summary>
       <param name="kernelIndex">For which kernel the texture is being set. See FindKernel.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="name">Name of the buffer variable in shader code.</param>
+      <param name="texture">Texture to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetTexture(System.Int32,System.Int32,UnityEngine.Texture)">
+      <summary>
+        <para>Set a texture parameter.</para>
+      </summary>
+      <param name="kernelIndex">For which kernel the texture is being set. See FindKernel.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="name">Name of the buffer variable in shader code.</param>
       <param name="texture">Texture to set.</param>
     </member>
@@ -10598,14 +10731,35 @@ See Also: CanvasRenderer.SetMaterialCount, CanvasRenderer.SetTexture.</para>
         <para>Set a texture parameter from a global texture property.</para>
       </summary>
       <param name="kernelIndex">For which kernel the texture is being set. See FindKernel.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="name">Name of the buffer variable in shader code.</param>
       <param name="globalTextureName">Global texture property to assign to shader.</param>
+      <param name="globalTextureNameID">Property name ID, use Shader.PropertyToID to get it.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetTextureFromGlobal(System.Int32,System.Int32,System.Int32)">
+      <summary>
+        <para>Set a texture parameter from a global texture property.</para>
+      </summary>
+      <param name="kernelIndex">For which kernel the texture is being set. See FindKernel.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="name">Name of the buffer variable in shader code.</param>
+      <param name="globalTextureName">Global texture property to assign to shader.</param>
+      <param name="globalTextureNameID">Property name ID, use Shader.PropertyToID to get it.</param>
     </member>
     <member name="M:UnityEngine.ComputeShader.SetVector(System.String,UnityEngine.Vector4)">
       <summary>
         <para>Set a vector parameter.</para>
       </summary>
       <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="val">Value to set.</param>
+    </member>
+    <member name="M:UnityEngine.ComputeShader.SetVector(System.Int32,UnityEngine.Vector4)">
+      <summary>
+        <para>Set a vector parameter.</para>
+      </summary>
+      <param name="name">Variable name in shader code.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="val">Value to set.</param>
     </member>
     <member name="T:UnityEngine.ConfigurableJoint">
@@ -26297,6 +26451,36 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="propertyName">The name of the property.</param>
       <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
     </member>
+    <member name="M:UnityEngine.Material.GetColorArray(System.String)">
+      <summary>
+        <para>Get a named color array.</para>
+      </summary>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="name">The name of the property.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetColorArray(System.Int32)">
+      <summary>
+        <para>Get a named color array.</para>
+      </summary>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="name">The name of the property.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetColorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Color&gt;)">
+      <summary>
+        <para>Fetch a named color array into a list.</para>
+      </summary>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="name">The name of the property.</param>
+      <param name="values">The list to hold the returned array.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetColorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Color&gt;)">
+      <summary>
+        <para>Fetch a named color array into a list.</para>
+      </summary>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="name">The name of the property.</param>
+      <param name="values">The list to hold the returned array.</param>
+    </member>
     <member name="M:UnityEngine.Material.GetFloat(System.String)">
       <summary>
         <para>Get a named float value.</para>
@@ -26310,6 +26494,36 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       </summary>
       <param name="propertyName">The name of the property.</param>
       <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetFloatArray(System.String)">
+      <summary>
+        <para>Get a named float array.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetFloatArray(System.Int32)">
+      <summary>
+        <para>Get a named float array.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetFloatArray(System.String,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Fetch a named float array into a list.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The list to hold the returned array.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetFloatArray(System.Int32,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Fetch a named float array into a list.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The list to hold the returned array.</param>
     </member>
     <member name="M:UnityEngine.Material.GetInt(System.String)">
       <summary>
@@ -26338,6 +26552,36 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       </summary>
       <param name="propertyName">The name of the property.</param>
       <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetMatrixArray(System.String)">
+      <summary>
+        <para>Get a named matrix array.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetMatrixArray(System.Int32)">
+      <summary>
+        <para>Get a named matrix array.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetMatrixArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Fetch a named matrix array into a list.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The list to hold the returned array.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetMatrixArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Fetch a named matrix array into a list.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The list to hold the returned array.</param>
     </member>
     <member name="M:UnityEngine.Material.GetPassName(System.Int32)">
       <summary>
@@ -26400,6 +26644,36 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       </summary>
       <param name="propertyName">The name of the property.</param>
       <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetVectorArray(System.String)">
+      <summary>
+        <para>Get a named vector array.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetVectorArray(System.Int32)">
+      <summary>
+        <para>Get a named vector array.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetVectorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Fetch a named vector array into a list.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The list to hold the returned array.</param>
+    </member>
+    <member name="M:UnityEngine.Material.GetVectorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Fetch a named vector array into a list.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The list to hold the returned array.</param>
     </member>
     <member name="M:UnityEngine.Material.HasProperty(System.String)">
       <summary>
@@ -26468,6 +26742,22 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
       <param name="values">Array of values to set.</param>
     </member>
+    <member name="M:UnityEngine.Material.SetColorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Color&gt;)">
+      <summary>
+        <para>Set a color array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="values">Array of values to set.</param>
+    </member>
+    <member name="M:UnityEngine.Material.SetColorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Color&gt;)">
+      <summary>
+        <para>Set a color array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="values">Array of values to set.</param>
+    </member>
     <member name="M:UnityEngine.Material.SetFloat(System.String,System.Single)">
       <summary>
         <para>Set a named float value.</para>
@@ -26493,6 +26783,22 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="values">Array of values to set.</param>
     </member>
     <member name="M:UnityEngine.Material.SetFloatArray(System.Int32,System.Single[])">
+      <summary>
+        <para>Set a float array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="values">Array of values to set.</param>
+    </member>
+    <member name="M:UnityEngine.Material.SetFloatArray(System.String,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Set a float array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+      <param name="values">Array of values to set.</param>
+    </member>
+    <member name="M:UnityEngine.Material.SetFloatArray(System.Int32,System.Collections.Generic.List`1&lt;System.Single&gt;)">
       <summary>
         <para>Set a float array property.</para>
       </summary>
@@ -26541,6 +26847,22 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
     </member>
     <member name="M:UnityEngine.Material.SetMatrixArray(System.Int32,UnityEngine.Matrix4x4[])">
+      <summary>
+        <para>Set a matrix array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="values">Array of values to set.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+    </member>
+    <member name="M:UnityEngine.Material.SetMatrixArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Set a matrix array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="values">Array of values to set.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+    </member>
+    <member name="M:UnityEngine.Material.SetMatrixArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
       <summary>
         <para>Set a matrix array property.</para>
       </summary>
@@ -26626,6 +26948,22 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="values">Array of values to set.</param>
       <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
     </member>
+    <member name="M:UnityEngine.Material.SetVectorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Set a vector array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="values">Array of values to set.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+    </member>
+    <member name="M:UnityEngine.Material.SetVectorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Set a vector array property.</para>
+      </summary>
+      <param name="name">Property name.</param>
+      <param name="values">Array of values to set.</param>
+      <param name="nameID">Property name ID, use Shader.PropertyToID to get it.</param>
+    </member>
     <member name="T:UnityEngine.MaterialGlobalIlluminationFlags">
       <summary>
         <para>How the material interacts with lightmaps and lightprobes.</para>
@@ -26680,6 +27018,36 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="name"></param>
       <param name="nameID"></param>
     </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetFloatArray(System.String)">
+      <summary>
+        <para>Get a float array from the property block.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetFloatArray(System.Int32)">
+      <summary>
+        <para>Get a float array from the property block.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetFloatArray(System.String,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Fetch a float array from the property block into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetFloatArray(System.Int32,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Fetch a float array from the property block into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
     <member name="M:UnityEngine.MaterialPropertyBlock.GetMatrix(System.String)">
       <summary>
         <para>Get a matrix from the property block.</para>
@@ -26691,6 +27059,36 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <summary>
         <para>Get a matrix from the property block.</para>
       </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetMatrixArray(System.String)">
+      <summary>
+        <para>Get a matrix array from the property block.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetMatrixArray(System.Int32)">
+      <summary>
+        <para>Get a matrix array from the property block.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetMatrixArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Fetch a matrix array from the property block into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetMatrixArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Fetch a matrix array from the property block into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
       <param name="name"></param>
       <param name="nameID"></param>
     </member>
@@ -26719,6 +27117,36 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <summary>
         <para>Get a vector from the property block.</para>
       </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetVectorArray(System.String)">
+      <summary>
+        <para>Get a vector array from the property block.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetVectorArray(System.Int32)">
+      <summary>
+        <para>Get a vector array from the property block.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetVectorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Fetch a vector array from the property block into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.GetVectorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Fetch a vector array from the property block into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
       <param name="name"></param>
       <param name="nameID"></param>
     </member>
@@ -26786,6 +27214,22 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
       <param name="values">The array to set.</param>
     </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.SetFloatArray(System.String,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Set a float array property.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The array to set.</param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.SetFloatArray(System.Int32,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Set a float array property.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="nameID">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="values">The array to set.</param>
+    </member>
     <member name="M:UnityEngine.MaterialPropertyBlock.SetMatrix(System.String,UnityEngine.Matrix4x4)">
       <summary>
         <para>Set a matrix property.</para>
@@ -26811,6 +27255,22 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="nameID">The array to set.</param>
     </member>
     <member name="M:UnityEngine.MaterialPropertyBlock.SetMatrixArray(System.Int32,UnityEngine.Matrix4x4[])">
+      <summary>
+        <para>Set a matrix array property.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="values">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="nameID">The array to set.</param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.SetMatrixArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Set a matrix array property.</para>
+      </summary>
+      <param name="name">The name of the property.</param>
+      <param name="values">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="nameID">The array to set.</param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.SetMatrixArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
       <summary>
         <para>Set a matrix array property.</para>
       </summary>
@@ -26859,6 +27319,22 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
       <param name="name">The array to set.</param>
     </member>
     <member name="M:UnityEngine.MaterialPropertyBlock.SetVectorArray(System.Int32,UnityEngine.Vector4[])">
+      <summary>
+        <para>Set a vector array property.</para>
+      </summary>
+      <param name="nameID">The name of the property.</param>
+      <param name="values">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="name">The array to set.</param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.SetVectorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Set a vector array property.</para>
+      </summary>
+      <param name="nameID">The name of the property.</param>
+      <param name="values">The name ID of the property retrieved by Shader.PropertyToID.</param>
+      <param name="name">The array to set.</param>
+    </member>
+    <member name="M:UnityEngine.MaterialPropertyBlock.SetVectorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
       <summary>
         <para>Set a vector array property.</para>
       </summary>
@@ -33233,6 +33709,11 @@ The Noise Module allows you to apply turbulence to the movement of your particle
         <para>MeshRenderer to emit particles from.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.ParticleSystem.ShapeModule.meshScale">
+      <summary>
+        <para>Apply a scaling factor to the mesh used for generating source positions.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.ParticleSystem.ShapeModule.meshShapeType">
       <summary>
         <para>Where on the mesh to emit particles from.</para>
@@ -33253,6 +33734,11 @@ The Noise Module allows you to apply turbulence to the movement of your particle
         <para>Randomizes the starting direction of particles.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.ParticleSystem.ShapeModule.randomDirectionAmount">
+      <summary>
+        <para>Randomizes the starting direction of particles.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.ParticleSystem.ShapeModule.shapeType">
       <summary>
         <para>Type of shape to emit particles from.</para>
@@ -33261,6 +33747,11 @@ The Noise Module allows you to apply turbulence to the movement of your particle
     <member name="P:UnityEngine.ParticleSystem.ShapeModule.skinnedMeshRenderer">
       <summary>
         <para>SkinnedMeshRenderer to emit particles from.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ParticleSystem.ShapeModule.sphericalDirectionAmount">
+      <summary>
+        <para>Spherizes the starting direction of particles.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.ParticleSystem.ShapeModule.useMeshColors">
@@ -34216,6 +34707,16 @@ The position stream is always enabled, and any attempts to remove it will be ign
     <member name="F:UnityEngine.ParticleSystemShapeType.Box">
       <summary>
         <para>Emit from the volume of a box.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ParticleSystemShapeType.BoxEdge">
+      <summary>
+        <para>Emit from the surface of a box.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ParticleSystemShapeType.BoxShell">
+      <summary>
+        <para>Emit from the edges of a box.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.ParticleSystemShapeType.Circle">
@@ -39372,6 +39873,22 @@ See Also: ReflectionProbeTimeSlicingMode.</para>
       <param name="values"></param>
       <param name="nameID"></param>
     </member>
+    <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalFloatArray(System.String,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Add a "set global shader float array property" command.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalFloatArray(System.Int32,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Add a "set global shader float array property" command.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+    </member>
     <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalMatrix(System.String,UnityEngine.Matrix4x4)">
       <summary>
         <para>Add a "set global shader matrix property" command.</para>
@@ -39397,6 +39914,22 @@ See Also: ReflectionProbeTimeSlicingMode.</para>
       <param name="nameID"></param>
     </member>
     <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalMatrixArray(System.Int32,UnityEngine.Matrix4x4[])">
+      <summary>
+        <para>Add a "set global shader matrix array property" command.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalMatrixArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Add a "set global shader matrix array property" command.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalMatrixArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
       <summary>
         <para>Add a "set global shader matrix array property" command.</para>
       </summary>
@@ -39445,6 +39978,22 @@ See Also: ReflectionProbeTimeSlicingMode.</para>
       <param name="nameID"></param>
     </member>
     <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalVectorArray(System.Int32,UnityEngine.Vector4[])">
+      <summary>
+        <para>Add a "set global shader vector array property" command.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalVectorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Add a "set global shader vector array property" command.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Rendering.CommandBuffer.SetGlobalVectorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
       <summary>
         <para>Add a "set global shader vector array property" command.</para>
       </summary>
@@ -40317,26 +40866,6 @@ Updating a probe's cubemap is a costly operation. Unity needs to render the enti
         <para>Returns true once the splash screen as finished. This is once all logos have been shown for their specified duration.</para>
       </summary>
     </member>
-    <member name="T:UnityEngine.Rendering.SplashScreen.AnimationMode">
-      <summary>
-        <para>The type of animation used when drawing the Made With Unity splash screen.</para>
-      </summary>
-    </member>
-    <member name="F:UnityEngine.Rendering.SplashScreen.AnimationMode.Custom">
-      <summary>
-        <para>The background and foreground animate with custom speeds.</para>
-      </summary>
-    </member>
-    <member name="F:UnityEngine.Rendering.SplashScreen.AnimationMode.Dolly">
-      <summary>
-        <para>The splash screen simulates a subtle dolly in (a forward camera movement).</para>
-      </summary>
-    </member>
-    <member name="F:UnityEngine.Rendering.SplashScreen.AnimationMode.Static">
-      <summary>
-        <para>The splash screen is static and no animation is applied.</para>
-      </summary>
-    </member>
     <member name="M:UnityEngine.Rendering.SplashScreen.Begin">
       <summary>
         <para>Initializes the splash screen so it is ready to begin drawing. Call this before you start calling Rendering.SplashScreen.Draw. Internally this function resets the timer and prepares the logos for drawing.</para>
@@ -40345,36 +40874,6 @@ Updating a probe's cubemap is a costly operation. Unity needs to render the enti
     <member name="M:UnityEngine.Rendering.SplashScreen.Draw">
       <summary>
         <para>Immediately draws the splash screen. Ensure you have called Rendering.SplashScreen.Begin before you start calling this.</para>
-      </summary>
-    </member>
-    <member name="T:UnityEngine.Rendering.SplashScreen.DrawMode">
-      <summary>
-        <para></para>
-      </summary>
-    </member>
-    <member name="F:UnityEngine.Rendering.SplashScreen.DrawMode.AllSequential">
-      <summary>
-        <para>The Unity logo is shown sequentially as defined in the splash screen logos list.</para>
-      </summary>
-    </member>
-    <member name="F:UnityEngine.Rendering.SplashScreen.DrawMode.UnityLogoBelow">
-      <summary>
-        <para>The Unity logo is drawn continuously at the bottom of the screen and shown alongside the custom splash screen logos.</para>
-      </summary>
-    </member>
-    <member name="T:UnityEngine.Rendering.SplashScreen.Style">
-      <summary>
-        <para>The style of the Unity logo within the Made With Unity splash screen.</para>
-      </summary>
-    </member>
-    <member name="F:UnityEngine.Rendering.SplashScreen.Style.DarkOnLight">
-      <summary>
-        <para>A dark Unity logo with a lighter colored background (when using the overlay).</para>
-      </summary>
-    </member>
-    <member name="F:UnityEngine.Rendering.SplashScreen.Style.LightOnDark">
-      <summary>
-        <para>A white Unity logo with a darker colored background (when using the overlay).</para>
       </summary>
     </member>
     <member name="T:UnityEngine.Rendering.StencilOp">
@@ -43049,6 +43548,180 @@ You can only move root GameObjects from one Scene to another. This means the Gam
       </summary>
       <param name="name"></param>
     </member>
+    <member name="M:UnityEngine.Shader.GetGlobalColor(System.String)">
+      <summary>
+        <para>Gets a global color property for all shaders previously set using SetGlobalColor.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalColor(System.Int32)">
+      <summary>
+        <para>Gets a global color property for all shaders previously set using SetGlobalColor.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalFloat(System.String)">
+      <summary>
+        <para>Gets a global float property for all shaders previously set using SetGlobalFloat.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalFloat(System.Int32)">
+      <summary>
+        <para>Gets a global float property for all shaders previously set using SetGlobalFloat.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalFloatArray(System.String)">
+      <summary>
+        <para>Gets a global float array for all shaders previously set using SetGlobalFloatArray.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalFloatArray(System.Int32)">
+      <summary>
+        <para>Gets a global float array for all shaders previously set using SetGlobalFloatArray.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalFloatArray(System.String,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Fetches a global float array into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalFloatArray(System.Int32,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Fetches a global float array into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalInt(System.String)">
+      <summary>
+        <para>Gets a global int property for all shaders previously set using SetGlobalInt.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalInt(System.Int32)">
+      <summary>
+        <para>Gets a global int property for all shaders previously set using SetGlobalInt.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalMatrix(System.String)">
+      <summary>
+        <para>Gets a global matrix property for all shaders previously set using SetGlobalMatrix.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalMatrix(System.Int32)">
+      <summary>
+        <para>Gets a global matrix property for all shaders previously set using SetGlobalMatrix.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalMatrixArray(System.String)">
+      <summary>
+        <para>Gets a global matrix array for all shaders previously set using SetGlobalMatrixArray.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalMatrixArray(System.Int32)">
+      <summary>
+        <para>Gets a global matrix array for all shaders previously set using SetGlobalMatrixArray.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalMatrixArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Fetches a global matrix array into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalMatrixArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Fetches a global matrix array into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalTexture(System.String)">
+      <summary>
+        <para>Gets a global texture property for all shaders previously set using SetGlobalTexture.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalTexture(System.Int32)">
+      <summary>
+        <para>Gets a global texture property for all shaders previously set using SetGlobalTexture.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalVector(System.String)">
+      <summary>
+        <para>Gets a global vector property for all shaders previously set using SetGlobalVector.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalVector(System.Int32)">
+      <summary>
+        <para>Gets a global vector property for all shaders previously set using SetGlobalVector.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalVectorArray(System.String)">
+      <summary>
+        <para>Gets a global vector array for all shaders previously set using SetGlobalVectorArray.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalVectorArray(System.Int32)">
+      <summary>
+        <para>Gets a global vector array for all shaders previously set using SetGlobalVectorArray.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalVectorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Fetches a global vector array into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.GetGlobalVectorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Fetches a global vector array into a list.</para>
+      </summary>
+      <param name="values">The list to hold the returned array.</param>
+      <param name="name"></param>
+      <param name="nameID"></param>
+    </member>
     <member name="M:UnityEngine.Shader.IsKeywordEnabled(System.String)">
       <summary>
         <para>Is global shader keyword enabled?</para>
@@ -43068,8 +43741,17 @@ You can only move root GameObjects from one Scene to another. This means the Gam
       <summary>
         <para>Sets a global compute buffer property for all shaders.</para>
       </summary>
-      <param name="propertyName"></param>
+      <param name="name"></param>
       <param name="buffer"></param>
+      <param name="nameID"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.SetGlobalBuffer(System.Int32,UnityEngine.ComputeBuffer)">
+      <summary>
+        <para>Sets a global compute buffer property for all shaders.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="buffer"></param>
+      <param name="nameID"></param>
     </member>
     <member name="M:UnityEngine.Shader.SetGlobalColor(System.String,UnityEngine.Color)">
       <summary>
@@ -43110,6 +43792,7 @@ You can only move root GameObjects from one Scene to another. This means the Gam
       <param name="propertyName"></param>
       <param name="values"></param>
       <param name="nameID"></param>
+      <param name="name"></param>
     </member>
     <member name="M:UnityEngine.Shader.SetGlobalFloatArray(System.Int32,System.Single[])">
       <summary>
@@ -43118,6 +43801,25 @@ You can only move root GameObjects from one Scene to another. This means the Gam
       <param name="propertyName"></param>
       <param name="values"></param>
       <param name="nameID"></param>
+      <param name="name"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.SetGlobalFloatArray(System.String,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Sets a global float array property for all shaders.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+      <param name="name"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.SetGlobalFloatArray(System.Int32,System.Collections.Generic.List`1&lt;System.Single&gt;)">
+      <summary>
+        <para>Sets a global float array property for all shaders.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+      <param name="name"></param>
     </member>
     <member name="M:UnityEngine.Shader.SetGlobalInt(System.String,System.Int32)">
       <summary>
@@ -43151,21 +43853,41 @@ You can only move root GameObjects from one Scene to another. This means the Gam
       <param name="mat"></param>
       <param name="nameID"></param>
     </member>
+    <member name="M:UnityEngine.Shader.SetGlobalMatrixArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Sets a global matrix array property for all shaders.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+      <param name="propertyName"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.SetGlobalMatrixArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Matrix4x4&gt;)">
+      <summary>
+        <para>Sets a global matrix array property for all shaders.</para>
+      </summary>
+      <param name="name"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+      <param name="propertyName"></param>
+    </member>
     <member name="M:UnityEngine.Shader.SetGlobalMatrixArray(System.String,UnityEngine.Matrix4x4[])">
       <summary>
         <para>Sets a global matrix array property for all shaders.</para>
       </summary>
-      <param name="propertyName"></param>
+      <param name="name"></param>
       <param name="values"></param>
       <param name="nameID"></param>
+      <param name="propertyName"></param>
     </member>
     <member name="M:UnityEngine.Shader.SetGlobalMatrixArray(System.Int32,UnityEngine.Matrix4x4[])">
       <summary>
         <para>Sets a global matrix array property for all shaders.</para>
       </summary>
-      <param name="propertyName"></param>
+      <param name="name"></param>
       <param name="values"></param>
       <param name="nameID"></param>
+      <param name="propertyName"></param>
     </member>
     <member name="M:UnityEngine.Shader.SetGlobalTexture(System.String,UnityEngine.Texture)">
       <summary>
@@ -43206,6 +43928,7 @@ You can only move root GameObjects from one Scene to another. This means the Gam
       <param name="propertyName"></param>
       <param name="values"></param>
       <param name="nameID"></param>
+      <param name="name"></param>
     </member>
     <member name="M:UnityEngine.Shader.SetGlobalVectorArray(System.Int32,UnityEngine.Vector4[])">
       <summary>
@@ -43214,6 +43937,25 @@ You can only move root GameObjects from one Scene to another. This means the Gam
       <param name="propertyName"></param>
       <param name="values"></param>
       <param name="nameID"></param>
+      <param name="name"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.SetGlobalVectorArray(System.String,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Sets a global vector array property for all shaders.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+      <param name="name"></param>
+    </member>
+    <member name="M:UnityEngine.Shader.SetGlobalVectorArray(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector4&gt;)">
+      <summary>
+        <para>Sets a global vector array property for all shaders.</para>
+      </summary>
+      <param name="propertyName"></param>
+      <param name="values"></param>
+      <param name="nameID"></param>
+      <param name="name"></param>
     </member>
     <member name="M:UnityEngine.Shader.WarmupAllShaders">
       <summary>
@@ -44983,6 +45725,11 @@ Returns NULL if there is no associated alpha texture for the source sprite. This
     <member name="F:UnityEngine.SystemInfo.unsupportedIdentifier">
       <summary>
         <para>Value returned by SystemInfo string properties which are not supported on the current platform.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.SystemInfo.usesReversedZBuffer">
+      <summary>
+        <para>Does the current platform use a reversed Z-Buffer (1-&gt;0)? (Read Only)</para>
       </summary>
     </member>
     <member name="M:UnityEngine.SystemInfo.SupportsRenderTextureFormat(UnityEngine.RenderTextureFormat)">
@@ -47055,6 +47802,11 @@ Returns NULL if there is no associated alpha texture for the source sprite. This
     <member name="P:UnityEngine.Time.maximumDeltaTime">
       <summary>
         <para>The maximum time a frame can take. Physics and other fixed frame rate updates (like MonoBehaviour's MonoBehaviour.FixedUpdate).</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Time.maximumParticleDeltaTime">
+      <summary>
+        <para>The maximum time a frame can spend on particle updates. If the frame takes longer than this, then updates are split into multiple smaller updates.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Time.realtimeSinceStartup">

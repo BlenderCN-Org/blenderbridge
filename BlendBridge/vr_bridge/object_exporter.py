@@ -48,6 +48,7 @@ class BlenderBridgeSceneParser:
     @staticmethod
     def create_verts_array(vertices, matrix):
         return [(matrix * vert.co)[:] for vert in vertices]
+        #return [(vert.co)[:] for vert in vertices]
 
     @staticmethod
     def create_normals_array(vertices):

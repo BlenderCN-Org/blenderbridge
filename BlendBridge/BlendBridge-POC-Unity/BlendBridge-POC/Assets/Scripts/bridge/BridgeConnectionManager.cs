@@ -251,7 +251,11 @@ public class BridgeConnectionManager : Singleton<BridgeConnectionManager> {
                     //state.sb.Append(Convert.ToBase64String(state.buffer, 0, bytesRead));
 
                     Debug.LogFormat("Appending Data {0} --- {1}", bytesRead, tmpString);
-                }                
+                }
+                else
+                {
+                    Debug.LogWarning("Couldn't find valid JSON object"); 
+                }               
 
                 // Get the rest of the data.
                 client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback), state);
